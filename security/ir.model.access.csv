@@ -1,0 +1,6 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_pos_home_delivery_user,pos.delivery.order.user,model_pos_delivery_order,point_of_sale.group_pos_user,1,1,1,0
+access_pos_home_delivery_manager,pos.delivery.order.manager,model_pos_delivery_order,point_of_sale.group_pos_manager,1,1,1,1
+access_pos_home_delivery_line_user,pos.delivery.order.line.user,model_pos_delivery_order_line,point_of_sale.group_pos_user,1,1,1,0
+access_pos_coupons_setting_manager,pos.delivery.order.line.manager,model_pos_delivery_order_line,point_of_sale.group_pos_manager,1,1,1,1
+

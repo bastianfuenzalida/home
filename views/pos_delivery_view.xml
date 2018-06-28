@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+  <record id="pos_home_delivery_order_form_view" model="ir.ui.view">
+        <field name="name">pos.home.delivery.order.form</field>
+        <field name="model">pos.delivery.order</field>
+        <field name="arch" type="xml">
+            <form string="Delivery Order">
+                <header>
+                    <button string="Make Payment" name='make_delivery_payment' states="delivered" type="object"/>
+                     <button string="In Progress" name='make_in_progress' states="draft" type="object"/>
+                     <button string="Delivered" name='make_delivered' states="in_progress" type="object"/>
+                     <button string="Cancel" name='make_cancel' states="draft,delivered,in_progress" type="object"/>
+                     <button string="Set To New" name='make_draft' states="cancel" type="object"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft, in_progress, delivered, paid, cancel" />
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <label for="order_no" string="Order No :" />
+                        <h2>
+                            <field name="order_no" select="1" />
+                        </h2>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="partner_id" />
+                            <label for="address" string="Address"/>
+                            <div class="o_address_format">
+                                <field name="address" placeholder="address..." class="o_address_street"/>
+                                <field name="street" placeholder="Street ..." class="o_address_street"/>
+                                <field name="city" placeholder="City" class="o_address_city"/>
+                                <field name="state_id" class="o_address_state" placeholder="State" options='{"no_open": True}'/>
+                                <field name="zip" placeholder="ZIP" class="o_address_zip"/>
+                                <field name="country_id" placeholder="Country" class="o_address_country" options='{"no_open": True, "no_create": True}'/>
+                            </div>
+                        </group>
+                        <group>
+                            <field name="delivery_date" />
+                            <field name="person_id" />
+                            <field name="mobile" />
+                            <field name="email" />
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Products">
+                            <field name="delivery_lines" nolabel="1">
+                                <tree>
+                                    <field name="product_id" />
+                                    <field name="item_qty" />
+                                    <field name="item_rate" />
+                                    <field name="item_note"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Payments">
+                            <field name="bank_statement_ids" nolabel="1">
+                                <tree string="Statement lines">
+                                    <field name="journal_id"/>
+                                    <field name="statement_id"/>
+                                    <field name="amount"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Extra Info">
+                            <group>
+                                <group>
+                                    <field name="cashier_id"/>
+                                    <field name="session_id"/>
+                                </group>
+                                <group>
+                                    <field name="pos_order_id"/>
+                                    <field name="order_date"/>
+                                    <field name="user_id"/>
+                                </group>
+                                <group colspan="6" string="Order Note">
+                                    <field name="order_note" placeholder="Write your note..." nolabel="1"/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="pos_home_delivery_order_tree_view" model="ir.ui.view">
+        <field name="name">pos.home.delivery.order.tree</field>
+        <field name="model">pos.delivery.order</field>
+        <field name="arch" type="xml">
+            <tree string="Delivery Order">
+                <field name="order_no" />
+                <field name="delivery_date" />
+                <field name="partner_id" string="Customer"/>
+                <field name="person_id" />
+                <field name="cashier_id" />
+                <field name="state" />
+            </tree>
+        </field>
+    </record>
+
+    <record id="pos_home_delivery_order_search_view" model="ir.ui.view">
+        <field name="name">pos.home.delivery.order.search</field>
+        <field name="model">pos.delivery.order</field>
+        <field name="arch" type="xml">
+            <search string="Delivery Order Search">
+                <field name="order_no"/>
+                <field name="person_id"/>
+                <field name="cashier_id"/>
+                <group expand="0" string="Group By">
+                    <filter string="User" domain="[]" context="{'group_by':'user_id'}"/>
+                    <filter string="Delivery Person" domain="[]" context="{'group_by':'person_id'}"/>
+                    <filter string="Session" domain="[]" context="{'group_by':'session_id'}"/>
+                    <filter string="Status" domain="[]" context="{'group_by':'state'}"/>
+                    <filter string="Delivery Date" domain="[]" context="{'group_by':'delivery_date'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="pos_home_delivery_order_action" model="ir.actions.act_window">
+        <field name="name">Home Delivery Order</field>
+        <field name="res_model">pos.delivery.order</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="pos_home_delivery_order_tree_view" />
+    </record>
+
+    <menuitem name="Home Delivery" id="menu_pos_home_delivery_id"
+        action="pos_home_delivery_order_action"
+        parent="point_of_sale.menu_point_of_sale" />
+
+    <record id="pos_delivery_order_config_form_view" model="ir.ui.view" >
+        <field name="name">delivery.order.pos.config.form</field>
+        <field name="model">pos.config</field> 
+        <field name="inherit_id" ref="point_of_sale.view_pos_config_form"/>
+        <field name="arch" type="xml">
+            <field name="iface_invoicing" position="after">
+                <field name="pos_verify_delivery"/>
+            </field>
+        </field>
+    </record>
+    <record id="view_account_journal_form_inherit_home_delivery" model="ir.ui.view">
+        <field name="name">account.journal.form.inherit.home_delivery</field>
+        <field name="model">account.journal</field>
+        <field name="inherit_id" ref="point_of_sale.view_account_journal_pos_user_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='journal_user']" position="after">
+                <field name="is_home_delivery"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>
